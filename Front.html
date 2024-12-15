@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calory Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: url('D:/Data/famous_korean_foods_table_display.png') no-repeat center center/cover;
+            color: black; 
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .welcome-screen {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        .welcome-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: flex 1s ease-in-out;
+        }
+        .welcome-right {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.5);
+            transition: flex 1s ease-in-out, opacity 1s ease-in-out;
+        }
+        .welcome-right.hidden {
+            opacity: 0;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .input-group input, .input-group select {
+            width: 80%;
+            padding: 10px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .menu-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: url('D:/Data/famous_korean_foods_table_display.png') no-repeat center center/cover;
+            color: white;
+        }
+        .category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;  
+    justify-items: center;
+}
+
+.category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;  
+    border: 1px solid #808080;
+    border-radius: 10px;
+    background-color: rgba(201, 129, 51, 0.54); 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    height: 200px; 
+    width: 200px;  
+}
+
+.category:hover {
+    transform: scale(1.05);
+    background-color: rgba(201, 129, 51, 0.7); 
+}
+
+.category img {
+    width: 120px;   
+    height: 120px; 
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+        
+        .food-list {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .food-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 80%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .food-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .food-item div {
+            flex: 1;
+            margin-left: 20px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: white;
+            box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+        }
+        h1, h2, h3 {
+            color: black; 
+        }
+        
+        .welcome-left, .menu-screen, .food-list {
+            color: white; 
+        }
+        
+        .category h3, .food-item h3, .food-item p {
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-left" id="welcomeLeft">
+                <h1>Welcome to Calory Tracker</h1>
+                <p>Track your daily calories effortlessly!</p>
+                <div class="input-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" placeholder="Enter your age">
+                </div>
+                <div class="input-group">
+                    <label for="weight">Weight (kg):</label>
+                    <input type="number" id="weight" placeholder="Enter your weight">
+                </div>
+                <div class="input-group">
+                    <label for="height">Height (cm):</label>
+                    <input type="number" id="height" placeholder="Enter your height">
+                </div>
+                <div class="input-group">
+                    <label for="sex">Sex:</label>
+                    <select id="sex">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <button onclick="saveUserInfo()">Start</button>
+            </div>
+            <div class="welcome-right" id="welcomeRight"></div>
+        </div>
+
+        
+        <div class="menu-screen" id="menuScreen" style="display: none;">
+            <h1>Select a Category</h1>
+            <div class="category-grid">
+                <div class="category" onclick="showFoodList('Korean Food')">
+                    <img src="file:///D:/Data/food.jpg" alt="Korean Food">
+                    <h3>Korean Food</h3>
+                </div>
+                <div class="category" onclick="showFoodList('Korean Snacks')">
+                    <img src="file:///D:/Data/Snacks.jpg" alt="Korean Snacks">
+                    <h3>Korean Snacks</h3>
+                </div>
+                <div class="category" onclick="showFoodList('Fast Food')">
+                    <img src="file:///D:/Data/Fast food.jpg" alt="Fast Food">
+                    <h3>Fast Food</h3>
+                </div>
+                <div class="category" onclick="showFoodList('Beverages')">
+                    <img src="file:///D:/Data/beverages.jpg" alt="Beverages">
+                    <h3>Beverages</h3>
+                </div>
+                
+                
+            </div>
+            <button onclick="resetUserInfo()">Change User</button> 
+        </div>
+
+        
+        <div class="food-list" id="foodList">
+            <h1 id="foodCategory">Food List</h1>
+            <div class="food-item">
+                <img src="https://via.placeholder.com/60" alt="Food">
+                <div>
+                    <h3>Food</h3>
+                    <p>Calories: 999</p>
+                </div>
+                <button onclick="trackFood('Food', 999)">Add</button>
+            </div>
+
+            <button onclick="goBackToMenu()">Back to Menu</button>
+            
+
+        </div>
+
+        
+        <div class="sidebar" id="dailyCalories" style="display: none;"> 
+            <h2>Today's Meals</h2>
+            <button onclick="toggleMealList()">Show Meals</button>
+            <ul id="caloryHistory" style="display: none;"></ul>
+            <h3>Total: <span id="totalCalories">0</span> kcal</h3>
+        </div>
+
+        
+        <button onclick="toggleSidebarVisibility()" id="toggleButton" style="position: fixed; top: 20px; right: 20px;">H</button>
+    </div>
+
+    <script>
+
+        let userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
+        let totalCalories = 0;
+        let mealsVisible = false;
+        let sidebarVisible = false; 
+
+        function saveUserInfo() {
+            const age = document.getElementById('age').value;
+            const weight = document.getElementById('weight').value;
+            const height = document.getElementById('height').value;
+            const sex = document.getElementById('sex').value;
+
+            if (!age || !weight || !height || !sex) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            userInfo = { age, weight, height, sex };
+            localStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+            
+            document.getElementById('welcomeRight').classList.add('hidden');
+            document.getElementById('welcomeLeft').style.flex = 2;
+
+            setTimeout(() => {
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('menuScreen').style.display = 'block';
+            }, 1000);
+        }
+
+        function resetUserInfo() {
+            
+            localStorage.removeItem('userInfo');
+            userInfo = null;
+            alert('User info reset! You can now enter new details.');
+            location.reload();
+        }
+        
+        const foodLists = {
+    "Korean Food": [
+        { "name": "Kimchi", "image": "D:/Data/Pictures/Korean-Food/kimchi.jpg", "calories": 50 },
+        { "name": "Bulgogi", "image": "D:/Data/Pictures/Korean-Food/bulgogi.jpg", "calories": 300 },
+        { "name": "Bibimbap", "image": "D:/Data/Pictures/Korean-Food/bibimbap.jpg", "calories": 200 },
+        { "name": "Tteokbokki", "image": "D:/Data/Pictures/Korean-Food/tteokbokki.jpg", "calories": 150 },
+        { "name": "Samgyeopsal", "image": "D:/Data/Pictures/Korean-Food/samgyeopsal.jpg", "calories": 400 },
+        { "name": "Jjigae", "image": "D:/Data/Pictures/Korean-Food/jjigae.jpg", "calories": 250 },
+        { "name": "Sundubu", "image": "D:/Data/Pictures/Korean-Food/sundubu.jpg", "calories": 180 },
+        { "name": "Galbi", "image": "D:/Data/Pictures/Korean-Food/galbi.jpg", "calories": 350 },
+        { "name": "Kimchi Jjigae", "image": "D:/Data/Pictures/Korean-Food/kimchi-jjigae.jpg", "calories": 200 },
+        { "name": "Banchan", "image": "D:/Data/Pictures/Korean-Food/banchan.jpg", "calories": 80 }
+    ],
+    "Korean Snacks": [
+        { "name": "Tteok", "image": "D:/Data/Pictures/Korean-Snacks/tteok.jpg", "calories": 100 },
+        { "name": "Kimbap", "image": "D:/Data/Pictures/Korean-Snacks/kimbap.jpg", "calories": 150 },
+        { "name": "Choco Pie", "image": "D:/Data/Pictures/Korean-Snacks/choco-pie.jpg", "calories": 150 },
+        { "name": "Jelly", "image": "D:/Data/Pictures/Korean-Snacks/jelly.jpg", "calories": 120 },
+        { "name": "Hotteok", "image": "D:/Data/Pictures/Korean-Snacks/hotteok.jpg", "calories": 200 },
+        { "name": "Fish Cake", "image": "D:/Data/Pictures/Korean-Snacks/fish-cake.jpg", "calories": 120 },
+        { "name": "Baked Sweet Potato", "image": "D:/Data/Pictures/Korean-Snacks/baked-sweet-potato.jpg", "calories": 100 },
+        { "name": "Binggrae Banana Milk", "image": "D:/Data/Pictures/Korean-Snacks/banana-milk.jpg", "calories": 150 },
+        { "name": "Banchan", "image": "D:/Data/Pictures/Korean-Snacks/banchan.jpg", "calories": 80 },
+        { "name": "Chili Pepper Snack", "image": "D:/Data/Pictures/Korean-Snacks/chili-pepper.jpg", "calories": 180 }
+    ],
+    "Fast Food": [
+        { "name": "Burger", "image": "D:/Data/Pictures/Fast/burger.jpg", "calories": 250 },
+        { "name": "Fries", "image": "D:/Data/Pictures/Fast/fries.jpg", "calories": 300 },
+        { "name": "Pizza", "image": "D:/Data/Pictures/Fast/pizza.jpg", "calories": 300 },
+        { "name": "Hot Dog", "image": "D:/Data/Pictures/Fast/hotdog.jpg", "calories": 250 },
+        { "name": "Chicken Nuggets", "image": "D:/Data/Pictures/Fast/chicken-nuggets.jpg", "calories": 300 },
+        { "name": "Sandwich", "image": "D:/Data/Pictures/Fast/sandwich.jpg", "calories": 350 },
+        { "name": "Fish Fillet", "image": "D:/Data/Pictures/Fast/fish-fillet.jpg", "calories": 200 },
+        { "name": "Wrap", "image": "D:/Data/Pictures/Fast/wrap.jpg", "calories": 350 },
+        { "name": "Milkshake", "image": "D:/Data/Pictures/Fast/milkshake.jpg", "calories": 500 },
+        { "name": "Onion Rings", "image": "D:/Data/Pictures/Fast/onion-rings.jpg", "calories": 250 }
+    ],
+    "Beverages": [
+        { "name": "Coke", "image": "D:/Data/Pictures/Beverages/coke.jpg", "calories": 150 },
+        { "name": "Pepsi", "image": "D:/Data/Pictures/Beverages/pepsi.jpg", "calories": 150 },
+        { "name": "Orange Juice", "image": "D:/Data/Pictures/Beverages/orange-juice.jpg", "calories": 50 },
+        { "name": "Lemonade", "image": "D:/Data/Pictures/Beverages/lemonade.jpg", "calories": 100 },
+        { "name": "Iced Tea", "image": "D:/Data/Pictures/Beverages/iced-tea.jpg", "calories": 60 },
+        { "name": "Smoothie", "image": "D:/Data/Pictures/Beverages/smoothie.jpg", "calories": 200 },
+        { "name": "Coffee", "image": "D:/Data/Pictures/Beverages/coffee.jpg", "calories": 5 },
+        { "name": "Water", "image": "D:/Data/Pictures/Beverages/water.jpg", "calories": 0 },
+        { "name": "Milk", "image": "D:/Data/Pictures/Beverages/milk.jpg", "calories": 60 },
+        { "name": "Energy Drink", "image": "D:/Data/Pictures/Beverages/energy-drink.jpg", "calories": 150 }
+    ]
+};
+
+function showFoodList(category) {
+    const foodListContainer = document.getElementById('foodList');
+    const foodCategory = document.getElementById('foodCategory');
+    const categoryFoods = foodLists[category] || [];
+
+    foodListContainer.innerHTML = ''; // Clear the food list container
+    foodCategory.textContent = category; // Set the category title
+
+    let totalCalories = 0;  // Initialize the total calories variable
+
+    categoryFoods.forEach(food => {
+        const foodItem = document.createElement('div');
+        foodItem.className = 'food-item';
+
+        foodItem.innerHTML = `
+            <img src="${food.image}" alt="${food.name}">
+            <div>
+                <h3>${food.name}</h3>
+                <p>Calories: ${food.calories}</p> <!-- Display calories for each food -->
+            </div>
+            <button onclick="trackFood('${food.name}', ${food.calories})">Add</button>
+        `;
+        foodListContainer.appendChild(foodItem);
+
+        totalCalories += food.calories; // Accumulate the total calories
+    });
+
+    // Now, display the total calories at the bottom or wherever you prefer
+    const totalCaloriesElement = document.createElement('div');
+    totalCaloriesElement.className = 'total-calories';
+    totalCaloriesElement.innerHTML = `<h4>Total Calories: ${totalCalories}</h4>`;
+    foodListContainer.appendChild(totalCaloriesElement);
+
+    foodListContainer.style.display = 'flex';
+    document.getElementById('menuScreen').style.display = 'none';
+    document.getElementById('foodList').style.display = 'block';
+}
+
+
+
+
+    function goBackToMenu() {
+        console.log("Going back to the menu..."); // Debugging log
+        document.getElementById('foodList').style.display = 'none'; // Hide food list
+        document.getElementById('menuScreen').style.display = 'block'; // Show menu
+    }
+
+    function trackFood(foodName, calories) {
+        totalCalories += calories;
+        document.getElementById('totalCalories').textContent = totalCalories;
+
+        const mealHistory = document.getElementById('caloryHistory');
+        const mealItem = document.createElement('li');
+        mealItem.textContent = `${foodName} - ${calories} kcal`;
+        mealHistory.appendChild(mealItem);
+    }
+
+    function goBackToMenu() {
+    document.getElementById('foodList').style.display = 'none';
+    document.getElementById('menuScreen').style.display = 'block';
+}
+
+
+
+    function toggleSidebarVisibility() {
+        sidebarVisible = !sidebarVisible;
+        const sidebar = document.getElementById('dailyCalories');
+        sidebar.style.display = sidebarVisible ? 'block' : 'none';
+    }
+
+    function toggleMealList() {
+        mealsVisible = !mealsVisible;
+        const mealHistory = document.getElementById('caloryHistory');
+        mealHistory.style.display = mealsVisible ? 'block' : 'none';
+    }
+</script>
+
+    </script>
+</body>
+</html>

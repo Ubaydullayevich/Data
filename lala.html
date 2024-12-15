@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food List Example</title>
+</head>
+<body>
+
+<!-- Menu Screen -->
+<div id="menuScreen">
+    <button onclick="showFoodList()">View Food List</button>
+</div>
+
+<!-- Food List Screen -->
+<div id="foodList" style="display: none;">
+    <h1 id="foodCategory">Food List</h1>
+    <!-- Sample Food Item -->
+    <div class="food-item">
+        <img src="https://via.placeholder.com/60" alt="Food">
+        <div>
+            <h3>Food</h3>
+            <p>Calories: 999</p>
+        </div>
+        <button onclick="trackFood('Food', 999)">Add</button>
+    </div>
+    <button onclick="goBackToMenu()">Back to Menu</button>
+</div>
+
+<script>
+    // Show the food list and hide the menu
+    function showFoodList() {
+        console.log("Showing food list..."); // Debugging log
+        document.getElementById('menuScreen').style.display = 'none'; // Hide menu
+        document.getElementById('foodList').style.display = 'block'; // Show food list
+    }
+
+    // Go back to the menu from the food list
+    function goBackToMenu() {
+        console.log("Going back to the menu..."); // Debugging log
+        document.getElementById('foodList').style.display = 'none'; // Hide food list
+        document.getElementById('menuScreen').style.display = 'block'; // Show menu
+    }
+</script>
+
+</body>
+</html>
